@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
+    <option name="projectFiles" value="$PROJECT_DIR$/internship-portal-api/src/main/java/com/dinushka/internship_portal_api/entity/User.java;C:/Users/Dinushka Sandeepa/OneDrive/Desktop/internship-portal/backend/internship-portal-api/src/main/java/com/dinushka/internship_portal_api/enums/ApplicationStatus.java;C:/Users/Dinushka Sandeepa/OneDrive/Desktop/internship-portal/backend/internship-portal-api/src/main/java/com/dinushka/internship_portal_api/enums/JobStatus.java;C:/Users/Dinushka Sandeepa/OneDrive/Desktop/internship-portal/backend/internship-portal-api/src/main/java/com/dinushka/internship_portal_api/enums/JobType.java;C:/Users/Dinushka Sandeepa/OneDrive/Desktop/internship-portal/backend/internship-portal-api/src/main/java/com/dinushka/internship_portal_api/enums/Role.java;C:/Users/Dinushka Sandeepa/OneDrive/Desktop/internship-portal/backend/internship-portal-api/src/main/java/com/dinushka/internship_portal_api/InternshipPortalApiApplication.java;C:/Users/Dinushka Sandeepa/OneDrive/Desktop/internship-portal/backend/internship-portal-api/src/test/java/com/dinushka/internship_portal_api/InternshipPortalApiApplicationTests.java" />
+  </component>
+</project>
