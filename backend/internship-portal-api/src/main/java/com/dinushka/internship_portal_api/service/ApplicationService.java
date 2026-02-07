@@ -1,9 +1,7 @@
 package com.dinushka.internship_portal_api.service;
 
-import com.dinushka.internship_portal_api.dto.ApplicationListItemDto;
-import com.dinushka.internship_portal_api.dto.ApplyJobRequestDto;
-import com.dinushka.internship_portal_api.dto.ApplicationResponseDto;
-import com.dinushka.internship_portal_api.dto.CompanyApplicationListItemDto;
+import com.dinushka.internship_portal_api.dto.*;
+
 
 import java.util.List;
 
@@ -15,4 +13,6 @@ public interface ApplicationService {
 
     // Company view: includes applicant details
     List<CompanyApplicationListItemDto> listCompanyApplications(Long companyId);
+
+    CompanyApplicationListItemDto updateApplicationStatus(Long companyId, Long applicationId, UpdateApplicationStatusRequestDto request);
 }

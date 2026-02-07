@@ -17,6 +17,8 @@ import com.dinushka.internship_portal_api.repository.StudentProfileRepository;
 import com.dinushka.internship_portal_api.service.ApplicationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.dinushka.internship_portal_api.dto.UpdateApplicationStatusRequestDto;
+
 
 import java.util.List;
 
@@ -89,6 +91,34 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .map(this::toCompanyListItemDto)
                 .toList();
     }
+
+    @Override
+    public CompanyApplicationListItemDto updateApplicationStatus(
+            Long companyId,
+            Long applicationId,
+            UpdateApplicationStatusRequestDto request
+    ) {
+        // Validate company exists
+        if (!companyProfileRepository.existsById(companyId)) {
+            throw new NotFoundException("Company not found: " + companyId);
+        }
+
+        // Ensure the application belongs to this company (prevents changing other company's applications)
+        boolean allowed = applicationRepository.existsByApplicationIdAndJob_Company_CompanyId(applicationId, companyId);
+        if (!allowed) {
+            // 404 is safer than 403 in a simple app (doesn't leak data)
+            throw new NotFoundException("Application not found for this company: " + applicationId);
+        }
+
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new NotFoundException("Application not found: " + applicationId));
+
+        application.setStatus(request.getStatus());
+
+        Application saved = applicationRepository.save(application);
+        return toCompanyListItemDto(saved);
+    }
+
 
     private ApplicationResponseDto toResponseDto(Application app) {
         ApplicationResponseDto dto = new ApplicationResponseDto();

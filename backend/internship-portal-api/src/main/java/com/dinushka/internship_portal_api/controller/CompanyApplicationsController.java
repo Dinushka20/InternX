@@ -2,7 +2,10 @@ package com.dinushka.internship_portal_api.controller;
 
 import com.dinushka.internship_portal_api.dto.CompanyApplicationListItemDto;
 import com.dinushka.internship_portal_api.service.ApplicationService;
+import com.dinushka.internship_portal_api.dto.UpdateApplicationStatusRequestDto;
+
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -23,4 +26,15 @@ public class CompanyApplicationsController {
     ) {
         return applicationService.listCompanyApplications(companyId);
     }
+
+    // PATCH /api/companies/{companyId}/applications/{applicationId}/status
+    @PatchMapping("/{companyId}/applications/{applicationId}/status")
+    public CompanyApplicationListItemDto updateApplicationStatus(
+            @PathVariable Long companyId,
+            @PathVariable Long applicationId,
+            @Valid @RequestBody UpdateApplicationStatusRequestDto request
+    ) {
+        return applicationService.updateApplicationStatus(companyId, applicationId, request);
+    }
+
 }
