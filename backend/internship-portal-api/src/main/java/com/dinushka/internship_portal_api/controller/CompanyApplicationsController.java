@@ -1,6 +1,6 @@
 package com.dinushka.internship_portal_api.controller;
 
-import com.dinushka.internship_portal_api.dto.ApplicationListItemDto;
+import com.dinushka.internship_portal_api.dto.CompanyApplicationListItemDto;
 import com.dinushka.internship_portal_api.service.ApplicationService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +18,9 @@ public class CompanyApplicationsController {
 
     // GET /api/companies/{companyId}/applications
     @GetMapping("/{companyId}/applications")
-    public List<ApplicationListItemDto> listCompanyApplications(@PathVariable Long companyId) {
+    public List<CompanyApplicationListItemDto> listCompanyApplications(
+            @PathVariable Long companyId
+    ) {
         return applicationService.listCompanyApplications(companyId);
     }
 }

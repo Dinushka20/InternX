@@ -3,6 +3,7 @@ package com.dinushka.internship_portal_api.service.impl;
 import com.dinushka.internship_portal_api.dto.ApplicationListItemDto;
 import com.dinushka.internship_portal_api.dto.ApplyJobRequestDto;
 import com.dinushka.internship_portal_api.dto.ApplicationResponseDto;
+import com.dinushka.internship_portal_api.dto.CompanyApplicationListItemDto;
 import com.dinushka.internship_portal_api.entity.Application;
 import com.dinushka.internship_portal_api.entity.Job;
 import com.dinushka.internship_portal_api.entity.StudentProfile;
@@ -66,25 +67,27 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(readOnly = true)
     public List<ApplicationListItemDto> listStudentApplications(Long studentId) {
-        // Validate student exists (nicer error than empty list)
         if (!studentProfileRepository.existsById(studentId)) {
             throw new NotFoundException("Student not found: " + studentId);
         }
 
         return applicationRepository.findByStudent_StudentIdOrderByAppliedAtDesc(studentId)
-                .stream().map(this::toListItemDto).toList();
+                .stream()
+                .map(this::toListItemDto)
+                .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ApplicationListItemDto> listCompanyApplications(Long companyId) {
-        // Validate company exists
+    public List<CompanyApplicationListItemDto> listCompanyApplications(Long companyId) {
         if (!companyProfileRepository.existsById(companyId)) {
             throw new NotFoundException("Company not found: " + companyId);
         }
 
         return applicationRepository.findByJob_Company_CompanyIdOrderByAppliedAtDesc(companyId)
-                .stream().map(this::toListItemDto).toList();
+                .stream()
+                .map(this::toCompanyListItemDto)
+                .toList();
     }
 
     private ApplicationResponseDto toResponseDto(Application app) {
@@ -97,6 +100,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         return dto;
     }
 
+    // Student view list item (same as before)
     private ApplicationListItemDto toListItemDto(Application app) {
         ApplicationListItemDto dto = new ApplicationListItemDto();
         dto.setApplicationId(app.getApplicationId());
@@ -109,6 +113,28 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         dto.setCompanyId(app.getJob().getCompany().getCompanyId());
         dto.setCompanyName(app.getJob().getCompany().getCompanyName());
+        return dto;
+    }
+
+    // Company view list item (includes applicant details)
+    private CompanyApplicationListItemDto toCompanyListItemDto(Application app) {
+        CompanyApplicationListItemDto dto = new CompanyApplicationListItemDto();
+
+        dto.setApplicationId(app.getApplicationId());
+        dto.setStatus(app.getStatus());
+        dto.setAppliedAt(app.getAppliedAt());
+
+        dto.setJobId(app.getJob().getJobId());
+        dto.setJobTitle(app.getJob().getTitle());
+        dto.setJobType(app.getJob().getJobType());
+
+        dto.setStudentId(app.getStudent().getStudentId());
+        dto.setStudentName(app.getStudent().getUser().getFullName());
+        dto.setUniversity(app.getStudent().getUniversity());
+        dto.setDegree(app.getStudent().getDegree());
+        dto.setGraduationYear(app.getStudent().getGraduationYear());
+        dto.setCvUrl(app.getStudent().getCvUrl());
+
         return dto;
     }
 }
