@@ -30,6 +30,15 @@ public class Job {
     @Column(name = "job_type", nullable = false)
     private JobType jobType;
 
+    // Optional job location (Remote / Colombo etc.)
+    @Column(name = "location", length = 120)
+    private String location;
+
+    // Optional salary for display
+    @Column(name = "salary")
+    private Integer salary;
+
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private JobStatus status = JobStatus.OPEN;
@@ -54,6 +63,12 @@ public class Job {
 
     public JobType getJobType() { return jobType; }
     public void setJobType(JobType jobType) { this.jobType = jobType; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public Integer getSalary() { return salary; }
+    public void setSalary(Integer salary) { this.salary = salary; }
 
     public JobStatus getStatus() { return status; }
     public void setStatus(JobStatus status) { this.status = status; }

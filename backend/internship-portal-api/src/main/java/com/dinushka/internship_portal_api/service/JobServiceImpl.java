@@ -7,10 +7,10 @@ import com.dinushka.internship_portal_api.entity.CompanyProfile;
 import com.dinushka.internship_portal_api.entity.Job;
 import com.dinushka.internship_portal_api.enums.JobStatus;
 import com.dinushka.internship_portal_api.enums.JobType;
+import com.dinushka.internship_portal_api.exception.BadRequestException;
 import com.dinushka.internship_portal_api.exception.NotFoundException;
 import com.dinushka.internship_portal_api.repository.CompanyProfileRepository;
 import com.dinushka.internship_portal_api.repository.JobRepository;
-import com.dinushka.internship_portal_api.service.JobService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,8 +46,13 @@ public class JobServiceImpl implements JobService {
         return toDto(job);
     }
 
+    // Legacy endpoint (if you still keep it)
     @Override
     public JobResponseDto createJob(CreateJobRequestDto request) {
+        if (request.getCompanyId() == null) {
+            throw new BadRequestException("companyId is required for this endpoint");
+        }
+
         CompanyProfile company = companyProfileRepository.findById(request.getCompanyId())
                 .orElseThrow(() -> new NotFoundException("Company not found: " + request.getCompanyId()));
 
@@ -56,6 +61,27 @@ public class JobServiceImpl implements JobService {
         job.setTitle(request.getTitle());
         job.setDescription(request.getDescription());
         job.setJobType(request.getJobType());
+        job.setLocation(request.getLocation());
+        job.setSalary(request.getSalary());
+        job.setStatus(JobStatus.OPEN);
+
+        Job saved = jobRepository.save(job);
+        return toDto(saved);
+    }
+
+    // Industry endpoint (/api/companies/me/jobs)
+    @Override
+    public JobResponseDto createJobForCompany(Long companyId, CreateJobRequestDto request) {
+        CompanyProfile company = companyProfileRepository.findById(companyId)
+                .orElseThrow(() -> new NotFoundException("Company not found: " + companyId));
+
+        Job job = new Job();
+        job.setCompany(company);
+        job.setTitle(request.getTitle());
+        job.setDescription(request.getDescription());
+        job.setJobType(request.getJobType());
+        job.setLocation(request.getLocation());
+        job.setSalary(request.getSalary());
         job.setStatus(JobStatus.OPEN);
 
         Job saved = jobRepository.save(job);
@@ -82,6 +108,8 @@ public class JobServiceImpl implements JobService {
         dto.setJobType(job.getJobType());
         dto.setStatus(job.getStatus());
         dto.setCreatedAt(job.getCreatedAt());
+        dto.setLocation(job.getLocation());
+        dto.setSalary(job.getSalary());
         return dto;
     }
 }

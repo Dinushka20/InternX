@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 
 public class CreateJobRequestDto {
 
-    @NotNull
+    // For legacy endpoint only (ignored for /companies/me/jobs)
     private Long companyId;
 
     @NotBlank
@@ -19,6 +19,11 @@ public class CreateJobRequestDto {
 
     @NotNull
     private JobType jobType;
+
+    @Size(max = 120)
+    private String location;
+
+    private Integer salary;
 
     public CreateJobRequestDto() {}
 
@@ -33,4 +38,10 @@ public class CreateJobRequestDto {
 
     public JobType getJobType() { return jobType; }
     public void setJobType(JobType jobType) { this.jobType = jobType; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public Integer getSalary() { return salary; }
+    public void setSalary(Integer salary) { this.salary = salary; }
 }

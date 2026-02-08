@@ -8,31 +8,33 @@ import java.time.Instant;
 public class CompanyApplicationListItemDto {
 
     private Long applicationId;
-    private ApplicationStatus status;
     private Instant appliedAt;
+    private ApplicationStatus status;
 
     private Long jobId;
     private String jobTitle;
     private JobType jobType;
 
-    // Applicant details (new)
     private Long studentId;
     private String studentName;
+
     private String university;
     private String degree;
     private Integer graduationYear;
-    private String cvUrl;
+
+    // ✅ do NOT expose file path
+    private boolean cvUploaded;
 
     public CompanyApplicationListItemDto() {}
 
     public Long getApplicationId() { return applicationId; }
     public void setApplicationId(Long applicationId) { this.applicationId = applicationId; }
 
-    public ApplicationStatus getStatus() { return status; }
-    public void setStatus(ApplicationStatus status) { this.status = status; }
-
     public Instant getAppliedAt() { return appliedAt; }
     public void setAppliedAt(Instant appliedAt) { this.appliedAt = appliedAt; }
+
+    public ApplicationStatus getStatus() { return status; }
+    public void setStatus(ApplicationStatus status) { this.status = status; }
 
     public Long getJobId() { return jobId; }
     public void setJobId(Long jobId) { this.jobId = jobId; }
@@ -58,7 +60,6 @@ public class CompanyApplicationListItemDto {
     public Integer getGraduationYear() { return graduationYear; }
     public void setGraduationYear(Integer graduationYear) { this.graduationYear = graduationYear; }
 
-    public String getCvUrl() { return cvUrl; }
-    public void setCvUrl(String cvUrl) { this.cvUrl = cvUrl; }
+    public boolean isCvUploaded() { return cvUploaded; }
+    public void setCvUploaded(boolean cvUploaded) { this.cvUploaded = cvUploaded; }
 }
-

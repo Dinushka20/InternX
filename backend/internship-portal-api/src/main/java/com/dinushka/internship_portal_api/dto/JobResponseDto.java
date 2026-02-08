@@ -12,6 +12,8 @@ public class JobResponseDto {
     private String title;
     private String description;
     private JobType jobType;
+    private String location;
+    private Integer salary;
     private JobStatus status;
     private Instant createdAt;
 
@@ -34,6 +36,12 @@ public class JobResponseDto {
 
     public JobType getJobType() { return jobType; }
     public void setJobType(JobType jobType) { this.jobType = jobType; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public Integer getSalary() { return salary; }
+    public void setSalary(Integer salary) { this.salary = salary; }
 
     public JobStatus getStatus() { return status; }
     public void setStatus(JobStatus status) { this.status = status; }

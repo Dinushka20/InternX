@@ -8,8 +8,16 @@ import com.dinushka.internship_portal_api.enums.JobType;
 import java.util.List;
 
 public interface JobService {
+
     List<JobResponseDto> listOpenJobs(JobType jobType);
+
     JobResponseDto getJobById(Long jobId);
+
+    // Legacy (if you still want it)
     JobResponseDto createJob(CreateJobRequestDto request);
+
+    // Industry endpoint uses this (companyId from JWT)
+    JobResponseDto createJobForCompany(Long companyId, CreateJobRequestDto request);
+
     JobResponseDto updateJobStatus(Long jobId, UpdateJobStatusRequestDto request);
 }

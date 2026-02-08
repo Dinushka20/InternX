@@ -15,7 +15,6 @@ import com.dinushka.internship_portal_api.service.ApplicationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.List;
 
 @Service
@@ -37,6 +36,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         this.companyProfileRepository = companyProfileRepository;
     }
 
+    // -------------------------
+    // APPLY (legacy)
+    // -------------------------
     @Override
     public ApplicationResponseDto apply(ApplyJobRequestDto request) {
         Long jobId = request.getJobId();
@@ -62,6 +64,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         return toResponseDto(saved);
     }
 
+    // -------------------------
+    // STUDENT LIST (legacy)
+    // -------------------------
     @Override
     @Transactional(readOnly = true)
     public List<ApplicationListItemDto> listStudentApplications(Long studentId) {
@@ -75,6 +80,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .toList();
     }
 
+    // -------------------------
+    // COMPANY LIST (secure view)
+    // -------------------------
     @Override
     @Transactional(readOnly = true)
     public List<CompanyApplicationListItemDto> listCompanyApplications(Long companyId) {
@@ -88,6 +96,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .toList();
     }
 
+    // -------------------------
+    // COMPANY UPDATE STATUS (ownership enforced)
+    // -------------------------
     @Override
     public CompanyApplicationListItemDto updateApplicationStatus(
             Long companyId,
@@ -99,25 +110,26 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new NotFoundException("Company not found: " + companyId);
         }
 
-        // Ensure the application belongs to this company (prevents changing other company's applications)
-        boolean allowed = applicationRepository.existsByApplicationIdAndJob_Company_CompanyId(applicationId, companyId);
-        if (!allowed) {
-            // 404 is safer than 403 in a simple app (doesn't leak data)
-            throw new NotFoundException("Application not found for this company: " + applicationId);
-        }
-
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new NotFoundException("Application not found: " + applicationId));
 
-        application.setStatus(request.getStatus());
+        Long ownerCompanyId = application.getJob().getCompany().getCompanyId();
+        if (!ownerCompanyId.equals(companyId)) {
+            // safer: do not reveal app exists
+            throw new NotFoundException("Application not found for this company: " + applicationId);
+        }
 
+        application.setStatus(request.getStatus());
         Application saved = applicationRepository.save(application);
+
         return toCompanyListItemDto(saved);
     }
 
+    // -------------------------
+    // /me endpoints
+    // -------------------------
     @Override
     public ApplicationResponseDto applyMe(Long studentUserId, ApplyJobMeRequestDto request) {
-        // studentUserId is same as student_id because of MapsId
         ApplyJobRequestDto dto = new ApplyJobRequestDto();
         dto.setJobId(request.getJobId());
         dto.setStudentId(studentUserId);
@@ -141,9 +153,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         return updateApplicationStatus(companyUserId, applicationId, request);
     }
 
-
-
-
+    // -------------------------
+    // MAPPERS
+    // -------------------------
     private ApplicationResponseDto toResponseDto(Application app) {
         ApplicationResponseDto dto = new ApplicationResponseDto();
         dto.setApplicationId(app.getApplicationId());
@@ -154,7 +166,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         return dto;
     }
 
-    // Student view list item (same as before)
+    // Student view list item
     private ApplicationListItemDto toListItemDto(Application app) {
         ApplicationListItemDto dto = new ApplicationListItemDto();
         dto.setApplicationId(app.getApplicationId());
@@ -170,7 +182,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         return dto;
     }
 
-    // Company view list item (includes applicant details)
+    // Company view list item (includes applicant details BUT no file path)
     private CompanyApplicationListItemDto toCompanyListItemDto(Application app) {
         CompanyApplicationListItemDto dto = new CompanyApplicationListItemDto();
 
@@ -182,12 +194,22 @@ public class ApplicationServiceImpl implements ApplicationService {
         dto.setJobTitle(app.getJob().getTitle());
         dto.setJobType(app.getJob().getJobType());
 
-        dto.setStudentId(app.getStudent().getStudentId());
-        dto.setStudentName(app.getStudent().getUser().getFullName());
-        dto.setUniversity(app.getStudent().getUniversity());
-        dto.setDegree(app.getStudent().getDegree());
-        dto.setGraduationYear(app.getStudent().getGraduationYear());
-        dto.setCvUrl(app.getStudent().getCvUrl());
+        StudentProfile student = app.getStudent();
+        dto.setStudentId(student.getStudentId());
+
+        // safer: avoid null pointer if user relation is missing
+        String studentName = null;
+        if (student.getUser() != null) {
+            studentName = student.getUser().getFullName();
+        }
+        dto.setStudentName(studentName);
+
+        dto.setUniversity(student.getUniversity());
+        dto.setDegree(student.getDegree());
+        dto.setGraduationYear(student.getGraduationYear());
+
+        // ✅ do NOT expose server path; expose boolean only
+        dto.setCvUploaded(student.getCvUrl() != null && !student.getCvUrl().isBlank());
 
         return dto;
     }
