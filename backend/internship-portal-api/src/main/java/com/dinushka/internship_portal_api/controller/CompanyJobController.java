@@ -1,32 +1,20 @@
 package com.dinushka.internship_portal_api.controller;
 
-import com.dinushka.internship_portal_api.dto.CreateJobRequestDto;
-import com.dinushka.internship_portal_api.dto.JobResponseDto;
-import com.dinushka.internship_portal_api.dto.UpdateJobStatusRequestDto;
-import com.dinushka.internship_portal_api.service.JobService;
-import jakarta.validation.Valid;
+import com.dinushka.internship_portal_api.exception.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/company/jobs")
 public class CompanyJobController {
 
-    private final JobService jobService;
-
-    public CompanyJobController(JobService jobService) {
-        this.jobService = jobService;
-    }
-
-    // POST /api/company/jobs
+    // Legacy endpoints are disabled. Use /api/companies/me/jobs
     @PostMapping
-    public JobResponseDto createJob(@Valid @RequestBody CreateJobRequestDto request) {
-        return jobService.createJob(request);
+    public void createJob() {
+        throw new NotFoundException("Endpoint removed. Use /api/companies/me/jobs");
     }
 
-    // PATCH /api/company/jobs/{id}/status
     @PatchMapping("/{id}/status")
-    public JobResponseDto updateStatus(@PathVariable("id") Long id,
-                                       @Valid @RequestBody UpdateJobStatusRequestDto request) {
-        return jobService.updateJobStatus(id, request);
+    public void updateStatus(@PathVariable("id") Long id) {
+        throw new NotFoundException("Endpoint removed. No public update endpoint");
     }
 }

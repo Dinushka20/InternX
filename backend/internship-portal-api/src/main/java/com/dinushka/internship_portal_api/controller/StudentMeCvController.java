@@ -42,7 +42,7 @@ public class StudentMeCvController {
 
         return ResponseEntity.ok(Map.of(
                 "message", "CV uploaded successfully",
-                "cvUrl", student.getCvUrl()
+                "cvUploaded", true
         ));
     }
 
