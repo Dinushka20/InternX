@@ -1,9 +1,6 @@
 package com.dinushka.internship_portal_api.service.impl;
 
-import com.dinushka.internship_portal_api.dto.ApplicationListItemDto;
-import com.dinushka.internship_portal_api.dto.ApplyJobRequestDto;
-import com.dinushka.internship_portal_api.dto.ApplicationResponseDto;
-import com.dinushka.internship_portal_api.dto.CompanyApplicationListItemDto;
+import com.dinushka.internship_portal_api.dto.*;
 import com.dinushka.internship_portal_api.entity.Application;
 import com.dinushka.internship_portal_api.entity.Job;
 import com.dinushka.internship_portal_api.entity.StudentProfile;
@@ -17,7 +14,6 @@ import com.dinushka.internship_portal_api.repository.StudentProfileRepository;
 import com.dinushka.internship_portal_api.service.ApplicationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.dinushka.internship_portal_api.dto.UpdateApplicationStatusRequestDto;
 
 
 import java.util.List;
@@ -118,6 +114,34 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application saved = applicationRepository.save(application);
         return toCompanyListItemDto(saved);
     }
+
+    @Override
+    public ApplicationResponseDto applyMe(Long studentUserId, ApplyJobMeRequestDto request) {
+        // studentUserId is same as student_id because of MapsId
+        ApplyJobRequestDto dto = new ApplyJobRequestDto();
+        dto.setJobId(request.getJobId());
+        dto.setStudentId(studentUserId);
+        return apply(dto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ApplicationListItemDto> listMyStudentApplications(Long studentUserId) {
+        return listStudentApplications(studentUserId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CompanyApplicationListItemDto> listMyCompanyApplications(Long companyUserId) {
+        return listCompanyApplications(companyUserId);
+    }
+
+    @Override
+    public CompanyApplicationListItemDto updateMyCompanyApplicationStatus(Long companyUserId, Long applicationId, UpdateApplicationStatusRequestDto request) {
+        return updateApplicationStatus(companyUserId, applicationId, request);
+    }
+
+
 
 
     private ApplicationResponseDto toResponseDto(Application app) {
